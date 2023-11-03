@@ -11,6 +11,8 @@ packages = [{ include = "readconnect", from = "src" }]
 python = "^3.10"
 fastapi = "^0.104.1"
 uvicorn = { extras = ["standard"], version = "^0.23.2" }
+python-json-logger = "^2.0.7"
+python-dotenv = "^1.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
