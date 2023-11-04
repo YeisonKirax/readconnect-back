@@ -1,7 +1,9 @@
-import os
 from enum import Enum
 
 from dotenv import load_dotenv
+from pydantic_settings import BaseSettings
+
+load_dotenv()
 
 
 class Env(str, Enum):
@@ -11,18 +13,17 @@ class Env(str, Enum):
     Production = "production"
 
 
-class Environment:
-    def __init__(self) -> None:
-        self.DB_HOST = os.getenv("DB_HOST", "localhost")
-        self.DB_PORT = int(os.getenv("DB_PORT", "1521"))
-        self.ENV: Env = os.getenv("ENV", Env.Local)
-
-    def get_json(self):
-        return self.__dict__.__repr__()
-
-
-def load_env():
-    load_dotenv()
+class Environment(BaseSettings):
+    host: str
+    port: int
+    env: str
+    secret_key: str
+    db_host: str
+    db_port: str
+    db_user: str
+    db_pass: str
+    db_name: str
+    debug: bool
 
 
 env_data = Environment()

@@ -27,7 +27,7 @@ def set_up_json_logger():
     }
 
     logging.basicConfig(
-        level=logging.INFO if env_data.ENV == Env.Production else logging.DEBUG,
+        level=logging.INFO if env_data.env == Env.Production else logging.DEBUG,
         format=format_str,
         datefmt="%m/%d/%Y %H:%M",
         handlers=[console_handler],

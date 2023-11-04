@@ -1,15 +1,15 @@
-import logging
 import uvicorn
 from fastapi import FastAPI
 
-from config.environment import load_env, env_data
-from config.logger import set_up_json_logger
+from config.environment import env_data
+from readconnect.auth.infrastructure.routes.auth_routes import auth_router
+from shared.infrastructure.db.schemas.entity_meta_schema import init
 
-load_env()
-set_up_json_logger()
-logging.info(env_data.get_json())
-
+# set_up_json_logger()
 app = FastAPI()
+app.include_router(prefix="/v1", router=auth_router, tags=["Authentication"])
+
+init()
 
 
 @app.get("/")
@@ -20,12 +20,12 @@ async def get_hello():
 def main():
     uvicorn.run(
         "src.main:app",
-        host=env_data.DB_HOST,
-        port=env_data.DB_PORT,
+        host=env_data.host,
+        port=env_data.port,
         reload=True,
         workers=2,
-        log_config=None,
-        use_colors=False,
+        # log_config=None,
+        # use_colors=False,
     )
 
 
