@@ -13,7 +13,7 @@ class LoginUserUseCase:
     auth_service: Annotated[AuthService, Depends(AuthService)]
 
     async def execute(self, request: LoginRequestDTO) -> LoginResponseDTO:
-        user_found = self.auth_service.get_user_by_email(request.email)
+        user_found = await self.auth_service.get_user_by_email(request.email)
         if user_found is None:
             raise Exception("error usuario no encontrado")
         is_valid_pass = self.auth_service.verify_password(

@@ -14,7 +14,7 @@ class SignupUserUseCase:
     auth_service: Annotated[AuthService, Depends(AuthService)]
 
     async def execute(self, request: SignupRequestDTO) -> SignupResponseDTO:
-        user_found = self.auth_service.get_user_by_email(request.email)
+        user_found = await self.auth_service.get_user_by_email(request.email)
         if user_found is not None:
             raise Exception("error usuario ya existe")
 
@@ -25,7 +25,7 @@ class SignupUserUseCase:
             email=request.email,
             password=password_hash,
         )
-        user_created = self.auth_service.create_new_user(user_model)
+        user_created = await self.auth_service.create_new_user(user_model)
         token = self.auth_service.generate_jwt(
             {
                 "id": user_created.id,

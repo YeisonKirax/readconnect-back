@@ -1,15 +1,21 @@
 import uvicorn
 from fastapi import FastAPI
 
+from config.db import Engine
 from config.environment import env_data
 from readconnect.auth.infrastructure.routes.auth_routes import auth_router
-from shared.infrastructure.db.schemas.entity_meta_schema import init
+from shared.infrastructure.db.schemas.entity_meta_schema import EntityMeta
 
 # set_up_json_logger()
 app = FastAPI()
 app.include_router(prefix="/v1", router=auth_router, tags=["Authentication"])
 
-init()
+
+@app.on_event("startup")
+async def init_tables():
+    async with Engine.begin() as conn:
+        # await conn.run_sync(EntityMeta.metadata.drop_all)
+        await conn.run_sync(EntityMeta.metadata.create_all)
 
 
 @app.get("/")
