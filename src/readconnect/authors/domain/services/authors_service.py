@@ -15,5 +15,8 @@ class AuthorsService:
 
     async def get_authors(self, query: AuthorsQueryParams):
         r = await self.authors_repository.find(query)
-        print(r)
+        return r
+
+    async def get_book_from_author(self, author_id: str):
+        r = await self.authors_repository.find_books(author_id)
         return r

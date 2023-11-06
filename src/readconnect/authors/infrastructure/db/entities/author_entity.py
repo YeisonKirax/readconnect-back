@@ -55,5 +55,4 @@ class AuthorEntity(EntityMeta):
                 name=self.name,
                 books=[book.normalize() for book in self.books],
             )
-        print(self.books)
         return Author(id=self.id, name=self.name, books=[])

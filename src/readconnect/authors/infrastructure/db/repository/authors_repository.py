@@ -7,28 +7,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.db import get_db_session
 from readconnect.authors.domain.dtos.authors_query_params import AuthorsQueryParams
-from readconnect.authors.domain.models.author_model import Author
 from readconnect.authors.infrastructure.db.entities.author_entity import (
     AuthorEntity,
 )
+from readconnect.books.infrastructure.db.entities.book_entity import BookEntity
 
 
 @dataclass()
 class AuthorsRepository:
     db: Annotated[AsyncSession, Depends(get_db_session)]
-
-    async def create_many(self, new_authors: List[Author]):
-        authors = [
-            AuthorEntity(
-                id=author.id,
-                name=author.name,
-            )
-            for author in new_authors
-        ]
-
-        self.db.add_all(authors)
-        await self.db.commit()
-        return authors
 
     async def find_by_id(self, author_id: str):
         query = select(AuthorEntity).where(AuthorEntity.id == author_id)
@@ -40,7 +27,7 @@ class AuthorsRepository:
             q = (
                 select(AuthorEntity.id, AuthorEntity.name)
                 .limit(query.size)
-                .offset(query.page * query.size)
+                .offset((query.page - 1) * query.size)
             )
             if query.include_books:
                 q = select(AuthorEntity).join(AuthorEntity.books)
@@ -57,3 +44,12 @@ class AuthorsRepository:
         result = await self.db.execute(q)
         result_mapped = result.mappings().fetchall()
         return [AuthorEntity(**author) for author in result_mapped]
+
+    async def find_books(self, author_id: str) -> List[AuthorEntity]:
+        q = (
+            select(BookEntity)
+            .join(BookEntity.authors)
+            .where(AuthorEntity.id == author_id)
+        )
+        result = await self.db.execute(q)
+        return result.scalars().all()
