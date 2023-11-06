@@ -1,9 +1,13 @@
-import uvicorn
-from fastapi import FastAPI
+from typing import Annotated
 
-from config.db import Engine
+import uvicorn
+from fastapi import FastAPI, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from config.db import Engine, get_db_session
 from config.environment import env_data
 from readconnect.auth.infrastructure.routes.auth_routes import auth_router
+from scripts.poblate_db import poblate_db
 from shared.infrastructure.db.schemas.entity_meta_schema import EntityMeta
 
 # set_up_json_logger()
@@ -18,9 +22,10 @@ async def init_tables():
         await conn.run_sync(EntityMeta.metadata.create_all)
 
 
-@app.get("/")
-async def get_hello():
-    return {"msg": "Hello world!"}
+@app.get("/seed", tags=["Seed"], description="Load in db the example dataset")
+async def seed(session: Annotated[AsyncSession, Depends(get_db_session)]):
+    await poblate_db(session)
+    return {"msg": "dataset loaded"}
 
 
 def main():

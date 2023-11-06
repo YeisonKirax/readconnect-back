@@ -11,7 +11,7 @@ from src.config.db import get_db_session
 
 
 @dataclass()
-class PostgresRepository:
+class UsersRepository:
     db: Annotated[AsyncSession, Depends(get_db_session)]
 
     async def create(self, new_user: User):
