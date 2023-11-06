@@ -7,12 +7,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from config.db import Engine, get_db_session
 from config.environment import env_data
 from readconnect.auth.infrastructure.routes.auth_routes import auth_router
+from readconnect.authors.infrastructure.routes.authors_routes import authors_router
 from scripts.poblate_db import poblate_db
+from shared.domain.dtos.query_params import QueryParams
 from shared.infrastructure.db.schemas.entity_meta_schema import EntityMeta
 
 # set_up_json_logger()
 app = FastAPI()
 app.include_router(prefix="/v1", router=auth_router, tags=["Authentication"])
+app.include_router(prefix="/v1", router=authors_router, tags=["Authors"])
 
 
 @app.on_event("startup")
@@ -26,6 +29,12 @@ async def init_tables():
 async def seed(session: Annotated[AsyncSession, Depends(get_db_session)]):
     await poblate_db(session)
     return {"msg": "dataset loaded"}
+
+
+@app.get("/")
+async def home(params: QueryParams = Depends()):
+    print(params)
+    return params
 
 
 def main():

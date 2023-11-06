@@ -11,7 +11,6 @@ from readconnect.authors.domain.models.restrictions import (
     AUTHORS_BOOKS_TABLE_NAME,
     AUTHOR_TABLE_NAME,
 )
-from readconnect.books.infrastructure.db.entities.book_entity import BookEntity
 from shared.infrastructure.db.schemas.entity_meta_schema import EntityMeta
 
 
@@ -41,13 +40,20 @@ class AuthorEntity(EntityMeta):
     id = Column(String(50), default=generate(), primary_key=True, unique=True)
     name = Column(String(100), nullable=False)
     books = relationship(
-        BookEntity.__name__,
+        "BookEntity",
         secondary=AUTHORS_BOOKS_TABLE_NAME,
         back_populates="authors",
+        uselist=True,
+        innerjoin=True,
+        lazy="selectin",
     )
 
     def normalize(self) -> Author:
-        return Author(
-            id=self.id,
-            name=self.name,
-        )
+        if len(self.books) > 0:
+            return Author(
+                id=self.id,
+                name=self.name,
+                books=[book.normalize() for book in self.books],
+            )
+        print(self.books)
+        return Author(id=self.id, name=self.name, books=[])

@@ -12,4 +12,4 @@ class AuthorBook(BaseModel):
 class Author(BaseModel):
     id: str = generate()
     name: str
-    books: List | None
+    books: List | None = []

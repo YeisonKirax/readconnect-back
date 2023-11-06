@@ -7,12 +7,12 @@ from pydantic import BaseModel
 class Book(BaseModel):
     id: str = generate()
     title: str
-    isbn: str
+    isbn: str = ""
     page_count: int
-    published_date: str
-    thumbnail_url: str
-    short_description: str
-    long_description: str
+    published_date: str = ""
+    thumbnail_url: str = ""
+    short_description: str = ""
+    long_description: str = ""
     status: str
-    categories: List | None
-    authors: List | None
+    categories: List = []
+    authors: List = []
