@@ -7,4 +7,4 @@ from pydantic import BaseModel
 class Category(BaseModel):
     id: str = generate()
     name: str
-    books: List | None
+    books: List | None = None

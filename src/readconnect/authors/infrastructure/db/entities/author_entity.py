@@ -49,10 +49,13 @@ class AuthorEntity(EntityMeta):
     )
 
     def normalize(self) -> Author:
-        if len(self.books) > 0:
-            return Author(
-                id=self.id,
-                name=self.name,
-                books=[book.normalize() for book in self.books],
-            )
-        return Author(id=self.id, name=self.name, books=[])
+        return Author(id=self.id, name=self.name, books=None)
+
+    def normalize_with_extra_data(self) -> Author:
+        return Author(
+            id=self.id,
+            name=self.name,
+            books=[book.normalize() for book in self.books]
+            if len(self.books) > 0
+            else None,
+        )

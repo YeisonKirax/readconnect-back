@@ -21,6 +21,9 @@ class CategoryEntity(EntityMeta):
         "BookEntity",
         secondary=BOOKS_CATEGORIES_TABLE_NAME,
         back_populates="categories",
+        uselist=True,
+        innerjoin=True,
+        lazy="selectin",
     )
 
     def normalize(self) -> Category:

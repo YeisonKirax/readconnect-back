@@ -13,4 +13,10 @@ class GetAuthorsUseCase:
 
     async def execute(self, query: AuthorsQueryParams):
         authors = await self.authors_service.get_authors(query)
-        return [author.normalize() for author in authors]
+        if query.include_books:
+            return [
+                author.normalize_with_extra_data().model_dump(exclude_none=True)
+                for author in authors
+            ]
+
+        return [author.normalize().model_dump(exclude_none=True) for author in authors]

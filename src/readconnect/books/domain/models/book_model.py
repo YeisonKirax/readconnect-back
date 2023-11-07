@@ -14,5 +14,5 @@ class Book(BaseModel):
     short_description: str = ""
     long_description: str = ""
     status: str
-    categories: List = []
-    authors: List = []
+    categories: List | None = None
+    authors: List | None = None

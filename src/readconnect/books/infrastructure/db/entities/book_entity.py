@@ -44,11 +44,17 @@ class BookEntity(EntityMeta):
         "AuthorEntity",
         secondary=AUTHORS_BOOKS_TABLE_NAME,
         back_populates="books",
+        innerjoin=True,
+        uselist=True,
+        lazy="selectin",
     )
     categories = relationship(
         "CategoryEntity",
         secondary=BOOKS_CATEGORIES_TABLE_NAME,
         back_populates="books",
+        innerjoin=True,
+        uselist=True,
+        lazy="selectin",
     )
 
     def normalize(self) -> Book:
@@ -62,4 +68,25 @@ class BookEntity(EntityMeta):
             short_description=self.short_description,
             long_description=self.long_description,
             status=self.status,
+            authors=None,
+            categories=None,
+        )
+
+    def normalize_with_extra(self) -> Book:
+        return Book(
+            id=self.id,
+            title=self.title,
+            isbn=self.isbn,
+            page_count=self.page_count,
+            published_date=self.published_date.__str__(),
+            thumbnail_url=self.thumbnail_url,
+            short_description=self.short_description,
+            long_description=self.long_description,
+            status=self.status,
+            authors=[au.normalize() for au in self.authors]
+            if len(self.authors) > 0
+            else None,
+            categories=[ca.normalize() for ca in self.categories]
+            if len(self.categories) > 0
+            else None,
         )

@@ -12,4 +12,4 @@ class GetBooksFromAnAuthorUseCase:
 
     async def execute(self, author_id: str):
         books = await self.authors_service.get_book_from_author(author_id)
-        return [book.normalize() for book in books]
+        return [book.normalize().model_dump(exclude_none=True) for book in books]

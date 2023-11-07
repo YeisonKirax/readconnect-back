@@ -30,7 +30,12 @@ class AuthorsRepository:
                 .offset((query.page - 1) * query.size)
             )
             if query.include_books:
-                q = select(AuthorEntity).join(AuthorEntity.books)
+                q = (
+                    select(AuthorEntity)
+                    .join(AuthorEntity.books)
+                    .limit(query.size)
+                    .offset((query.page - 1) * query.size)
+                )
                 result = await self.db.execute(q)
                 return result.scalars().all()
             result = await self.db.execute(q)
@@ -40,7 +45,7 @@ class AuthorsRepository:
         if query.include_books:
             q = select(AuthorEntity).join(AuthorEntity.books)
             result = await self.db.execute(q)
-            return result.scalars().all()
+            return result.scalars()
         result = await self.db.execute(q)
         result_mapped = result.mappings().fetchall()
         return [AuthorEntity(**author) for author in result_mapped]
