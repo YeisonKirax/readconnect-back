@@ -4,6 +4,16 @@ from nanoid import generate
 from pydantic import BaseModel
 
 
+class Author(BaseModel):
+    id: str
+    name: str
+
+
+class Category(BaseModel):
+    id: str
+    name: str
+
+
 class Book(BaseModel):
     id: str = generate()
     title: str
@@ -14,5 +24,5 @@ class Book(BaseModel):
     short_description: str = ""
     long_description: str = ""
     status: str
-    categories: List | None = None
-    authors: List | None = None
+    categories: List[Category] | None = None
+    authors: List[Author] | None = None

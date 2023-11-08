@@ -4,8 +4,8 @@ from pydantic import BaseModel, EmailStr, SecretStr
 
 class User(BaseModel):
     id: str = generate()
-    avatar: str | None = None
+    avatar: str = ""
     name: str
     surname: str
     email: EmailStr
-    password: SecretStr
+    password: SecretStr | None = None

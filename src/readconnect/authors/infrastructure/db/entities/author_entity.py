@@ -1,29 +1,28 @@
 from nanoid import generate
 from sqlalchemy import (
-    Column,
     String,
     ForeignKey,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from readconnect.authors.domain.models.author_model import Author, AuthorBook
 from readconnect.authors.domain.models.restrictions import (
     AUTHORS_BOOKS_TABLE_NAME,
     AUTHOR_TABLE_NAME,
 )
-from shared.infrastructure.db.schemas.entity_meta_schema import EntityMeta
+from readconnect.shared.infrastructure.db.schemas.entity_meta_schema import EntityMeta
 
 
 class AuthorsBooksEntity(EntityMeta):
     __tablename__ = AUTHORS_BOOKS_TABLE_NAME
 
-    author_id = Column(
+    author_id: Mapped[str] = mapped_column(
         String(50),
         ForeignKey("authors.id"),
         nullable=False,
         primary_key=True,
     )
-    book_id = Column(
+    book_id: Mapped[str] = mapped_column(
         String(50),
         ForeignKey("books.id"),
         nullable=False,
@@ -37,8 +36,10 @@ class AuthorsBooksEntity(EntityMeta):
 class AuthorEntity(EntityMeta):
     __tablename__ = AUTHOR_TABLE_NAME
 
-    id = Column(String(50), default=generate(), primary_key=True, unique=True)
-    name = Column(String(100), nullable=False)
+    id: Mapped[str] = mapped_column(
+        String(50), default=generate(), primary_key=True, unique=True
+    )
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
     books = relationship(
         "BookEntity",
         secondary=AUTHORS_BOOKS_TABLE_NAME,

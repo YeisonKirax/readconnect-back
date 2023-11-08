@@ -1,5 +1,6 @@
-from readconnect.auth.domain.dtos.login_response_dto import LoginResponseDTO
+from pydantic import BaseModel
 
 
-class SignupResponseDTO(LoginResponseDTO):
-    pass
+class SignupResponseDTO(BaseModel):
+    status: str
+    message: str

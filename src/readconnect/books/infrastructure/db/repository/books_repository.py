@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from typing import Annotated, List
 
 from fastapi import Depends
+from fastapi_pagination import Page
+from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -21,7 +23,7 @@ class BooksRepository:
         await self.db.commit()
         return books
 
-    async def find_by_id(self, book_id: str):
+    async def find_by_id(self, book_id: str) -> BookEntity:
         query = (
             select(BookEntity)
             .join(BookEntity.authors)
@@ -31,36 +33,7 @@ class BooksRepository:
         result = await self.db.execute(query)
         return result.scalar()
 
-    async def find(self, query: BooksQueryParams) -> List[BookEntity]:
-        if query.page is not None and query.size is not None:
-            q = (
-                select(
-                    BookEntity.id,
-                    BookEntity.title,
-                    BookEntity.isbn,
-                    BookEntity.long_description,
-                    BookEntity.short_description,
-                    BookEntity.published_date,
-                    BookEntity.thumbnail_url,
-                    BookEntity.page_count,
-                    BookEntity.status,
-                )
-                .limit(query.size)
-                .offset((query.page - 1) * query.size)
-            )
-            if query.include_extra_data:
-                q = (
-                    select(BookEntity)
-                    .join(BookEntity.authors)
-                    .join(BookEntity.categories)
-                    .limit(query.size)
-                    .offset((query.page - 1) * query.size)
-                )
-                result = await self.db.execute(q)
-                return result.scalars().all()
-            result = await self.db.execute(q)
-            result_mapped = result.mappings().fetchall()
-            return [BookEntity(**book) for book in result_mapped]
+    async def find(self, query: BooksQueryParams) -> Page[Book]:
         q = select(
             BookEntity.id,
             BookEntity.title,
@@ -74,8 +47,35 @@ class BooksRepository:
         )
         if query.include_extra_data:
             q = select(BookEntity).join(BookEntity.authors).join(BookEntity.categories)
-            result = await self.db.execute(q)
-            return result.scalars().all()
-        result = await self.db.execute(q)
-        result_mapped = result.mappings().fetchall()
-        return [BookEntity(**book) for book in result_mapped]
+            return await paginate(self.db, q)
+
+        return await paginate(self.db, q)
+
+    async def search(self, query: BooksQueryParams) -> Page[Book]:
+        q = select(
+            BookEntity.id,
+            BookEntity.title,
+            BookEntity.isbn,
+            BookEntity.long_description,
+            BookEntity.short_description,
+            BookEntity.published_date,
+            BookEntity.thumbnail_url,
+            BookEntity.page_count,
+            BookEntity.status,
+        ).filter(
+            BookEntity.title.icontains(query.search)
+            | BookEntity.isbn.icontains(query.search)
+        )
+        if query.include_extra_data:
+            q = (
+                select(BookEntity)
+                .filter(
+                    BookEntity.title.contains(query.search)
+                    | BookEntity.isbn.contains(query.search)
+                )
+                .join(BookEntity.authors)
+                .join(BookEntity.categories)
+            )
+            return await paginate(self.db, q)
+
+        return await paginate(self.db, q)

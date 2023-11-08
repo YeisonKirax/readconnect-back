@@ -28,12 +28,12 @@ class UsersRepository:
         await self.db.commit()
         return user
 
-    async def find_by_id(self, user_id: str):
+    async def find_by_id(self, user_id: str) -> UserEntity:
         query = select(UserEntity).where(UserEntity.id == user_id)
         result = await self.db.execute(query)
         return result.scalar()
 
-    async def find_by_email(self, email: str):
+    async def find_by_email(self, email: str) -> UserEntity:
         query = select(UserEntity).where(UserEntity.email == email)
         result = await self.db.execute(query)
         return result.scalars().first()

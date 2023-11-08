@@ -1,4 +1,4 @@
-from shared.domain.dtos.query_params import QueryParams
+from readconnect.shared.domain.dtos.query_params import QueryParams
 
 
 class AuthorsQueryParams(QueryParams):

@@ -13,10 +13,4 @@ class GetBooksUseCase:
 
     async def execute(self, query: BooksQueryParams):
         books = await self.books_service.get_books(query)
-        if query.include_extra_data:
-            return [
-                book.normalize_with_extra().model_dump(exclude_none=True)
-                for book in books
-            ]
-
-        return [book.normalize().model_dump(exclude_none=True) for book in books]
+        return books

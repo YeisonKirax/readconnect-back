@@ -37,7 +37,7 @@ class AuthorsRepository:
                     .offset((query.page - 1) * query.size)
                 )
                 result = await self.db.execute(q)
-                return result.scalars().all()
+                return [a for a in result.scalars().all()]
             result = await self.db.execute(q)
             result_mapped = result.mappings().fetchall()
             return [AuthorEntity(**author) for author in result_mapped]
@@ -45,16 +45,16 @@ class AuthorsRepository:
         if query.include_books:
             q = select(AuthorEntity).join(AuthorEntity.books)
             result = await self.db.execute(q)
-            return result.scalars()
+            return [a for a in result.scalars().all()]
         result = await self.db.execute(q)
         result_mapped = result.mappings().fetchall()
         return [AuthorEntity(**author) for author in result_mapped]
 
-    async def find_books(self, author_id: str) -> List[AuthorEntity]:
+    async def find_books(self, author_id: str) -> List[BookEntity]:
         q = (
             select(BookEntity)
             .join(BookEntity.authors)
             .where(AuthorEntity.id == author_id)
         )
         result = await self.db.execute(q)
-        return result.scalars().all()
+        return [b for b in result.scalars().all()]

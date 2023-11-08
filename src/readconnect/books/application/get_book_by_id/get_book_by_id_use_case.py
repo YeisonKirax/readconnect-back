@@ -3,14 +3,19 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from readconnect.books.domain.dtos.books_query_params import BooksQueryParams
 from readconnect.books.domain.services.books_service import BooksService
+from readconnect.shared.domain.exceptions.exceptions import NotFoundError
 
 
 @dataclass()
 class GetBookByIdUseCase:
     books_service: Annotated[BooksService, Depends(BooksService)]
 
-    async def execute(self, query: BooksQueryParams):
-        books = await self.books_service.get_books(query)
-        return [book.normalize().model_dump(exclude_none=True) for book in books]
+    async def execute(self, book_id: str):
+        book = await self.books_service.get_book_by_id(book_id)
+        if book is None:
+            raise NotFoundError(
+                details="el libro no fue encontrado en nuestros registros",
+                status_code=404,
+            )
+        return book.normalize_with_extra()

@@ -14,8 +14,10 @@ class BooksService:
     books_repository: Annotated[BooksRepository, Depends(BooksRepository)]
 
     async def get_books(self, query: BooksQueryParams):
-        r = await self.books_repository.find(query)
-        return r
+        if query.search is not None:
+            return await self.books_repository.search(query)
+        p = await self.books_repository.find(query)
+        return p
 
     async def get_book_by_id(self, book_id: str):
         r = await self.books_repository.find_by_id(book_id)

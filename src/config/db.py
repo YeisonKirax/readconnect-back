@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 
 from config.environment import env_data
 
-SQLALCHEMY_DATABASE_URL = f"postgresql+asyncpg://{env_data.db_user}:{env_data.db_pass}@{env_data.db_host}:{env_data.db_port}/{env_data.db_name}"
+SQLALCHEMY_DATABASE_URL = f"postgresql+psycopg://{env_data.db_user}:{env_data.db_pass}@{env_data.db_host}:{env_data.db_port}/{env_data.db_name}"
 
 Engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=env_data.debug, future=True)
 
@@ -15,5 +15,5 @@ AsyncSessionFactory = async_sessionmaker(
 
 
 async def get_db_session() -> AsyncSession:
-    async with AsyncSessionFactory() as session:
+    async with AsyncSession(Engine) as session:
         yield session
