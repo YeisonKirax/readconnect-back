@@ -13,7 +13,6 @@ from readconnect.authors.application.get_books_from_an_author.get_books_from_an_
 )
 from readconnect.authors.domain.dtos.authors_query_params import AuthorsQueryParams
 from readconnect.authors.domain.models.author_model import Author
-from readconnect.books.domain.models.book_model import Book
 from readconnect.shared.domain.dtos.error_response_dto import ErrorResponse
 from readconnect.shared.domain.exceptions.exceptions import NotFoundError
 
@@ -39,16 +38,16 @@ async def get_authors(
 
 
 @authors_router.get(
-    "/{author_id}/books",
+    "/{author_id}",
     response_model_exclude_none=True,
     responses={
-        200: {"model": List[Book]},
+        200: {"model": Author},
         502: {"model": ErrorResponse},
         422: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
     },
 )
-async def get_books_authors(
+async def get_author(
     author_id: str,
     get_books_from_and_author_use_case: Annotated[
         GetBooksFromAnAuthorUseCase, Depends(GetBooksFromAnAuthorUseCase)

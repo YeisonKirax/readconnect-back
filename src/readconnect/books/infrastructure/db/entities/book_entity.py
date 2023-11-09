@@ -1,4 +1,3 @@
-from nanoid import generate
 from sqlalchemy import String, Integer, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -29,9 +28,7 @@ class BooksCategoriesEntity(EntityMeta):
 class BookEntity(EntityMeta):
     __tablename__ = BOOK_TABLE_NAME
 
-    id: Mapped[str] = mapped_column(
-        String(50), default=generate(), primary_key=True, unique=True, index=True
-    )
+    id: Mapped[str] = mapped_column(String(50), primary_key=True)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     isbn: Mapped[str] = mapped_column(String(50), nullable=True, default="")
     page_count: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -89,8 +86,8 @@ class BookEntity(EntityMeta):
             status=self.status,
             authors=[au.normalize().model_dump() for au in self.authors]
             if len(self.authors) > 0
-            else None,
+            else [],
             categories=[ca.normalize().model_dump() for ca in self.categories]
             if len(self.categories) > 0
-            else None,
+            else [],
         )

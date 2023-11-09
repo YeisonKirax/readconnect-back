@@ -18,5 +18,5 @@ class AuthorsService:
         return r
 
     async def get_book_from_author(self, author_id: str):
-        r = await self.authors_repository.find_books(author_id)
+        r = await self.authors_repository.find_by_id(author_id)
         return r

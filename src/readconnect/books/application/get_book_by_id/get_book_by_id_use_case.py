@@ -13,6 +13,7 @@ class GetBookByIdUseCase:
 
     async def execute(self, book_id: str):
         book = await self.books_service.get_book_by_id(book_id)
+        print(book)
         if book is None:
             raise NotFoundError(
                 details="el libro no fue encontrado en nuestros registros",

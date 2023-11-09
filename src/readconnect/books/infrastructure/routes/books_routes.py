@@ -21,6 +21,7 @@ books_router = APIRouter(prefix="/books")
 @books_router.get(
     "",
     status_code=200,
+    response_model=Page[Book],
     responses={200: {"model": Page[Book]}},
     response_model_exclude_none=True,
 )
@@ -32,6 +33,7 @@ async def get_books(
         books = await get_books_use_case.execute(params)
         return books
     except Exception as e:
+        print(e)
         detail = f"Ocurrió un problema al realizar su petición. Detalle: {e.__str__()}"
         return JSONResponse(
             status_code=status.HTTP_502_BAD_GATEWAY,
@@ -54,6 +56,7 @@ async def get_book_by_id(
     get_book_by_id_use_case: Annotated[GetBookByIdUseCase, Depends(GetBookByIdUseCase)],
 ):
     try:
+        print(book_id)
         books = await get_book_by_id_use_case.execute(book_id)
         return books
     except ValidationError as e:

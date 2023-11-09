@@ -11,5 +11,5 @@ class GetBooksFromAnAuthorUseCase:
     authors_service: Annotated[AuthorsService, Depends(AuthorsService)]
 
     async def execute(self, author_id: str):
-        books = await self.authors_service.get_book_from_author(author_id)
-        return [book.normalize().model_dump(exclude_none=True) for book in books]
+        author = await self.authors_service.get_book_from_author(author_id)
+        return author

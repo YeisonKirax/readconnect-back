@@ -18,7 +18,12 @@ class AuthorsRepository:
     db: Annotated[AsyncSession, Depends(get_db_session)]
 
     async def find_by_id(self, author_id: str):
-        query = select(AuthorEntity).where(AuthorEntity.id == author_id)
+        print(author_id)
+        query = (
+            select(AuthorEntity)
+            .join(AuthorEntity.books)
+            .where(AuthorEntity.id == author_id)
+        )
         result = await self.db.execute(query)
         return result.scalar()
 

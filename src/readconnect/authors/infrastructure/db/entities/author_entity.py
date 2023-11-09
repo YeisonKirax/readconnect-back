@@ -56,7 +56,7 @@ class AuthorEntity(EntityMeta):
         return Author(
             id=self.id,
             name=self.name,
-            books=[book.normalize() for book in self.books]
+            books=[book.normalize().model_dump() for book in self.books]
             if len(self.books) > 0
             else None,
         )

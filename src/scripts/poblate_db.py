@@ -52,7 +52,6 @@ async def poblate_db(session: AsyncSession):
             else "",
             status=book["status"],
         )
-        print(book_parsed.id)
         books_parsed.append(book_parsed)
         for tag in book["categories"]:
             tag_sanitized = str(tag).strip().lower()

@@ -24,12 +24,7 @@ class BooksRepository:
         return books
 
     async def find_by_id(self, book_id: str) -> BookEntity:
-        query = (
-            select(BookEntity)
-            .join(BookEntity.authors)
-            .join(BookEntity.categories)
-            .where(BookEntity.id == book_id)
-        )
+        query = select(BookEntity).where(BookEntity.id == book_id)
         result = await self.db.execute(query)
         return result.scalar()
 
@@ -70,8 +65,8 @@ class BooksRepository:
             q = (
                 select(BookEntity)
                 .filter(
-                    BookEntity.title.contains(query.search)
-                    | BookEntity.isbn.contains(query.search)
+                    BookEntity.title.icontains(query.search)
+                    | BookEntity.isbn.icontains(query.search)
                 )
                 .join(BookEntity.authors)
                 .join(BookEntity.categories)
