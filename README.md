@@ -38,3 +38,13 @@ El despliegue fue realizado en [render](https://render.com).
 * Búsqueda de libros (por título o isbn)
 * Ver un libro
 * Ruta para poblar la base de datos.
+
+# Base de datos
+
+Para la construcción de la base de datos, se tomó como base el dataset de libros de [amazon](https://github.com/dudeonthehorse/datasets/blob/master/amazon.books.json)
+
+Pero se realizaron algunas modificaciones al momento de construir la base. Se cambió los id's a un formato de string y fueron remplzados por nano id's y se seleccionaron los 301 primeros libros. A partir de esta base se generaron las tablas y relaciones. El siguiente diagrama ejemplifica como quedó la base de datos.
+
+![readconnect_db.png](assets/readconnect_db.png)
+
+Lamentablemente, no se encuentra completa dado que no se alcanzó a realizar las funcionalidades que involucraban a los usuarios.
